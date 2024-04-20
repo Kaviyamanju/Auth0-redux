@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useEffect } from 'react';
+import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { login } from './actions/authActions';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
+import authConfig from './auth_config.json';
+import Welcome from './Welcome';
+import Login from './Login';
+import "./App.css";
 function App() {
+  const { isAuthenticated, isLoading, user, loginWithRedirect } = useAuth0();
+  useEffect(() => {
+      
+  }, [isAuthenticated, isLoading, loginWithRedirect, user]);
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Auth0Provider
+      domain={authConfig.domain}
+      clientId={authConfig.clientId}
+      authorizationParams={{
+        redirect_uri: authConfig.redirectUri
+      }}
+    >
+      <Router> 
+        <Routes>
+          <Route path="/welcome"element={<Welcome/>}/>
+          <Route path="/" element={<Login/>} />
+        </Routes>
+      </Router>
+    </Auth0Provider>
   );
 }
 
